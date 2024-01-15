@@ -19,17 +19,17 @@ Sub handwriting()
     Next i
     
     
-    font_config(0).InitializeWithValues "ÊÀ½çÄÇÃ´´ó", 18, -2, 20
-    font_config(1).InitializeWithValues "ÃÀÓñÌå", 16, 0, 25
-    font_config(2).InitializeWithValues "·½Õı¾²ÀÙ¼òÌå", 14, 2, 15
-    font_config(3).InitializeWithValues "ÎÄ¶¦´ó¸Ö±ÊĞĞ¿¬", 14, 2, 20
-    font_config(4).InitializeWithValues "ººÒÇ¾®°ØÈ»Ìå¼ò", 17, -1, 15
-    font_config(5).InitializeWithValues "²®ÀÖÍ¯ÄêÌå", 15, 0, 0
-    font_config(6).InitializeWithValues "²®ÀÖ×Ö¿âÖñËñÌå", 15, 0, 15
-    font_config(7).InitializeWithValues "»ª¿µôæôæÌåW3P", 15, 1.2, 8
+    font_config(0).InitializeWithValues "ä¸–ç•Œé‚£ä¹ˆå¤§", 18, -2, 20
+    font_config(1).InitializeWithValues "ç¾ç‰ä½“", 16, 0, 25
+    font_config(2).InitializeWithValues "æ–¹æ­£é™è•¾ç®€ä½“", 14, 2, 15
+    font_config(3).InitializeWithValues "æ–‡é¼å¤§é’¢ç¬”è¡Œæ¥·", 14, 2, 20
+    font_config(4).InitializeWithValues "æ±‰ä»ªäº•æŸç„¶ä½“ç®€", 17, -1, 15
+    font_config(5).InitializeWithValues "ä¼¯ä¹ç«¥å¹´ä½“", 15, 0, 0
+    font_config(6).InitializeWithValues "ä¼¯ä¹å­—åº“ç«¹ç¬‹ä½“", 15, 0, 15
+    font_config(7).InitializeWithValues "ååº·ç¿©ç¿©ä½“W3P", 15, 1.2, 8
     font_config(8).InitializeWithValues "BoLeYaYati", 16, 0, 0
-    font_config(9).InitializeWithValues "ººÒÇPPÌå¼ò", 15, 1.2, 0
-    font_config(10).InitializeWithValues "²®ÀÖÇÎÆ¤Ìå", 15, 0, 0
+    font_config(9).InitializeWithValues "æ±‰ä»ªPPä½“ç®€", 15, 1.2, 0
+    font_config(10).InitializeWithValues "ä¼¯ä¹ä¿çš®ä½“", 15, 0, 0
     
     
     total_probability = 0
@@ -37,46 +37,49 @@ Sub handwriting()
         total_probability = total_probability + font_config(i).probability
     Next i
     
+    ' åˆå§‹åŒ–éšæœºæ•°ç”Ÿæˆå™¨
     VBA.Randomize
-    Dim random As Integer
 
-    
-
+    ' åˆå§‹åŒ–å­—ä½“æ¯”ä¾‹å˜é‡
     Dim last_font_ratio As Double
+    Dim font_ratio As Double
     Dim font_size As Double
-    
     last_font_ratio = 0.2
-    For Each R_Character In ActiveDocument.Characters
-        random = Int(VBA.Rnd * total_probability)
-        
-        Dim current_font As FontConfig
-        Dim current_count As Double
-        current_count = 0
-        For i = 0 To (font_count - 1)
-            current_count = current_count + font_config(i).probability
-            If random < current_count Then
-                Set current_font = font_config(i)
-                Exit For
-            End If
-        Next i
-    
-        font_ratio = last_font_ratio + (0.1 * VBA.Rnd - 0.05)
-        If font_ratio > 0.25 Then
-        font_ratio = 0.25
-        End If
-        If font_ratio < 0.15 Then
-        font_ratio = 0.15
-        End If
-        last_font_ratio = font_ratio
-        font_size = current_font.size * (1 + last_font_ratio)
-        
-        R_Character.Font.name = current_font.name
-        R_Character.Font.size = font_size
-        R_Character.Font.Position = -(VBA.Rnd * 0.2 + 0.1) * (font_size - 15)
-        R_Character.Font.Spacing = current_font.expanded + VBA.Rnd * 2 + -2
-    Next
-        Application.ScreenUpdating = True
 
+    ' æ£€æŸ¥æ˜¯å¦æœ‰é€‰ä¸­çš„æ–‡æœ¬
+    If Not Selection.Range.Text = vbNullString Then
+        ' éå†é€‰ä¸­æ–‡æœ¬ä¸­çš„æ¯ä¸ªå­—ç¬¦
+        For Each R_Character In Selection.Range.Characters
+            Dim random As Integer
+            random = Int(VBA.Rnd * total_probability)
 
+            ' é€‰æ‹©å­—ä½“
+            Dim current_font As FontConfig
+            Dim current_count As Double
+            current_count = 0
+            For i = 0 To (font_count - 1)
+                current_count = current_count + font_config(i).probability
+                If random < current_count Then
+                    Set current_font = font_config(i)
+                    Exit For
+                End If
+            Next i
+
+            ' è®¡ç®—å¹¶åº”ç”¨å­—ä½“æ ·å¼
+            font_ratio = last_font_ratio + (0.1 * VBA.Rnd - 0.05)
+            If font_ratio > 0.25 Then font_ratio = 0.25
+            If font_ratio < 0.15 Then font_ratio = 0.15
+            last_font_ratio = font_ratio
+            font_size = current_font.size * (1 + last_font_ratio)
+
+            R_Character.Font.name = current_font.name
+            R_Character.Font.size = font_size
+            R_Character.Font.Position = -(VBA.Rnd * 0.2 + 0.1) * (font_size - 15)
+            R_Character.Font.Spacing = current_font.expanded + VBA.Rnd * 2 - 2
+        Next R_Character
+    End If
+
+    ' æ›´æ–°å±å¹•æ˜¾ç¤º
+    Application.ScreenUpdating = True
 
 End Sub
